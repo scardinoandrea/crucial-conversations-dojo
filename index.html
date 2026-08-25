@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Case File — Crucial Conversations Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft:#e7dcc0;
+    --folder:#c9a86a;
+    --folder-shadow:#a3803f;
+    --ink:#241f16;
+    --ink-soft:#5a5140;
+    --paper:#f7f1e1;
+    --stamp-red:#9c2b23;
+    --stamp-red-dark:#7a1f19;
+    --safety-teal:#3e5c55;
+    --safety-teal-dark:#2b433d;
+    --line:#b8a479;
+    --lock:#8a8474;
+    --shadow: 0 10px 30px rgba(36,31,22,0.25);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: radial-gradient(ellipse at top left, rgba(255,255,255,0.15), transparent 60%), var(--kraft);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:32px 16px 64px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  header.masthead{text-align:center;margin-bottom:22px;}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  h1.title{font-family:'Special Elite',cursive;font-size:clamp(28px,5vw,42px);margin:0 0 6px;letter-spacing:0.02em;}
+  .subtitle{font-size:14px;color:var(--ink-soft);max-width:540px;margin:0 auto;line-height:1.5;}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);padding:24px;margin-bottom:20px;position:relative;}
+  .panel::before{content:"";position:absolute;top:0;left:24px;right:24px;height:3px;background:repeating-linear-gradient(90deg,var(--line) 0 6px, transparent 6px 12px);opacity:0.5;}
+
+  .drawtitle{font-family:'Special Elite',cursive;font-size:20px;margin:0 0 14px;}
+  button{font-family:'Inter',sans-serif;cursor:pointer;border:none;border-radius:3px;}
+  .btn-primary{background:var(--stamp-red);color:var(--paper);font-weight:700;font-size:15px;padding:14px 22px;letter-spacing:0.03em;width:100%;box-shadow:0 4px 0 var(--stamp-red-dark);transition:transform 0.08s ease;}
+  .btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--stamp-red-dark);}
+  .btn-primary:disabled{background:var(--lock);box-shadow:0 4px 0 #5f5a4d;cursor:not-allowed;opacity:0.7;}
+  .btn-secondary{background:transparent;border:1.5px solid var(--ink-soft);color:var(--ink);font-size:13px;padding:9px 16px;font-weight:600;}
+  .btn-teal{background:var(--safety-teal);color:var(--paper);font-weight:700;font-size:14px;padding:12px 20px;box-shadow:0 4px 0 var(--safety-teal-dark);}
+  .btn-teal:active{transform:translateY(3px);box-shadow:0 1px 0 var(--safety-teal-dark);}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+  select#chapterSelect{
+    width:100%;
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    padding:12px;
+    border:1.5px solid var(--folder-shadow);
+    border-radius:4px;
+    background:#fffdf7;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .chapter-badge{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    background:var(--safety-teal);
+    color:var(--paper);
+    padding:4px 10px;
+    border-radius:3px;
+    margin-bottom:12px;
+  }
+  .locked-note{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin-top:10px;padding:10px 12px;border:1px dashed var(--lock);border-radius:4px;background:rgba(0,0,0,0.03);}
+
+  .case-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);background:rgba(0,0,0,0.05);display:inline-block;padding:4px 10px;border-radius:3px;margin-bottom:10px;}
+  .case-title{font-family:'Special Elite',cursive;font-size:24px;margin:0 0 12px;}
+  .shared-brief{font-size:15px;line-height:1.65;border-left:3px solid var(--folder-shadow);padding-left:14px;margin:0 0 18px;}
+
+  .role-select{display:flex;gap:12px;margin-top:6px;}
+  .role-card{flex:1;background:var(--folder);border:1px solid var(--folder-shadow);border-radius:4px;padding:20px 14px;text-align:center;font-family:'Special Elite',cursive;font-size:18px;cursor:pointer;transition:transform 0.1s ease;box-shadow:0 3px 0 var(--folder-shadow);}
+  .role-card:hover{transform:translateY(-2px);}
+  .role-card small{display:block;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;margin-top:6px;color:var(--ink-soft);}
+
+  .confidential{background:var(--ink);color:var(--kraft);border-radius:4px;padding:22px;position:relative;overflow:hidden;}
+  .stamp{position:absolute;top:14px;right:-30px;background:var(--stamp-red);color:var(--paper);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;letter-spacing:0.15em;padding:5px 40px;transform:rotate(8deg);box-shadow:0 2px 6px rgba(0,0,0,0.4);}
+  .confidential h3{font-family:'Special Elite',cursive;font-size:17px;margin:0 0 4px;color:var(--kraft);}
+  .confidential .role-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#a89b7a;margin-bottom:14px;}
+  .confidential p{font-size:14.5px;line-height:1.65;color:#e8dfc8;}
+  .warn{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#e0a89f;margin-top:16px;border-top:1px dashed #4a4230;padding-top:12px;}
+
+  #stage-timer .timer-display{font-family:'JetBrains Mono',monospace;font-size:52px;text-align:center;letter-spacing:0.05em;margin:6px 0 4px;}
+  .timer-label{text-align:center;font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:14px;}
+  .timer-controls{display:flex;gap:10px;justify-content:center;}
+  #prep-prompt{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-top:-8px;}
+
+  .state-block{margin-bottom:16px;}
+  .state-block h4{font-family:'Special Elite',cursive;font-size:15px;margin:0 0 2px;color:var(--stamp-red-dark);}
+  .state-block .ch-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-soft);letter-spacing:0.08em;display:block;margin-bottom:8px;}
+  label.check{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);}
+  label.check input{margin-top:3px;width:16px;height:16px;accent-color:var(--safety-teal);flex-shrink:0;}
+  textarea{width:100%;min-height:70px;font-family:'Inter',sans-serif;font-size:13.5px;padding:10px;border:1px solid var(--line);border-radius:4px;background:#fffdf7;resize:vertical;}
+  .hidden{display:none !important;}
+  .small-note{font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
+  footer{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:8px;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="kicker">Mentorship Practice Series</div>
+    <h1 class="title">The Case File</h1>
+    <p class="subtitle">A crucial-conversations dojo. Two roles, two sets of facts, one real disagreement — worked live with only the tools you've actually read so far.</p>
+  </header>
+
+  <!-- STAGE 0: CHAPTER GATE -->
+  <div class="panel" id="stage-gate">
+    <p class="drawtitle">Where are you in the book?</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-top:-8px;">Everything below this point — the prep prompt and the debrief checklist — only shows tools introduced up to the chapter you pick. Nothing from later chapters leaks in, so you're practicing what you actually know, not what the book eventually tells you to do.</p>
+    <select id="chapterSelect" onchange="renderGateInfo()">
+      <option value="1">Ch. 1 — What's a Crucial Conversation?</option>
+      <option value="2">Ch. 2 — Mastering Crucial Conversations</option>
+      <option value="3">Ch. 3 — Choose Your Topic</option>
+      <option value="4" selected>Ch. 4 — Start with Heart</option>
+      <option value="5">Ch. 5 — Master My Stories</option>
+      <option value="6">Ch. 6 — Learn to Look</option>
+      <option value="7">Ch. 7 — Make It Safe</option>
+      <option value="8">Ch. 8 — STATE My Path</option>
+      <option value="9">Ch. 9 — Explore Others' Paths</option>
+      <option value="10">Ch. 10 — Retake Your Pen</option>
+      <option value="11">Ch. 11 — Move to Action</option>
+      <option value="12">Ch. 12 — Yeah, But</option>
+      <option value="13">Ch. 13 — Putting It All Together (full toolkit)</option>
+    </select>
+    <div id="gate-info"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="lockChapterAndProceed()">Lock it in →</button>
+    </div>
+  </div>
+
+  <!-- STAGE 1: PICK -->
+  <div class="panel hidden" id="stage-pick">
+    <div class="chapter-badge" id="active-chapter-badge"></div>
+    <p class="drawtitle">Draw a case</p>
+    <p style="font-size:14px;line-height:1.55;color:var(--ink-soft);margin-top:-6px;">Each case is a real-feeling frontend-team situation. You'll each privately read facts the other person doesn't have.</p>
+    <button class="btn-primary" onclick="drawCase()">🗂 Draw a random case</button>
+    <div class="btn-row"><button class="btn-secondary" onclick="showStage('stage-gate')">↻ Change chapter level</button></div>
+  </div>
+
+  <!-- STAGE 2: BRIEF + ROLE SELECT -->
+  <div class="panel hidden" id="stage-brief">
+    <div class="case-name" id="case-num"></div>
+    <h2 class="case-title" id="case-title"></h2>
+    <p class="shared-brief" id="case-shared"></p>
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;">Decide who's who, then each of you taps <em>only your own</em> role below — don't read the other card.</p>
+    <div class="role-select">
+      <div class="role-card" onclick="revealRole('A')">Role A<small id="labelA"></small></div>
+      <div class="role-card" onclick="revealRole('B')">Role B<small id="labelB"></small></div>
+    </div>
+    <div class="btn-row"><button class="btn-secondary" onclick="drawCase()">↻ Different case</button></div>
+  </div>
+
+  <!-- STAGE 3: CONFIDENTIAL REVEAL -->
+  <div class="panel hidden" id="stage-reveal">
+    <div class="confidential">
+      <div class="stamp">EYES ONLY</div>
+      <div class="role-label" id="reveal-role-label"></div>
+      <h3 id="reveal-name"></h3>
+      <p id="reveal-text"></p>
+      <div class="warn">⚠ Close this or hand off the device before the other person looks. Don't paraphrase this to them — the gap between what you each know is the point.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="showStage('stage-brief')">← Back to case</button>
+      <button class="btn-teal" onclick="showStage('stage-timer'); resetTimer();">I've read it — start prep →</button>
+    </div>
+  </div>
+
+  <!-- STAGE 4: TIMER -->
+  <div class="panel hidden" id="stage-timer">
+    <p class="drawtitle">Prep, then talk</p>
+    <p id="prep-prompt"></p>
+    <div class="timer-label" id="timer-phase">Prep</div>
+    <div class="timer-display" id="timer-display">01:30</div>
+    <div class="timer-controls">
+      <button class="btn-secondary" onclick="toggleTimer()" id="timer-toggle">Start</button>
+      <button class="btn-secondary" onclick="resetTimer()">Reset</button>
+      <button class="btn-secondary" onclick="skipToTalk()">Skip to talk-timer</button>
+    </div>
+    <div class="btn-row"><button class="btn-primary" onclick="showStage('stage-debrief')">We're done talking → Debrief</button></div>
+  </div>
+
+  <!-- STAGE 5: DEBRIEF -->
+  <div class="panel hidden" id="stage-debrief">
+    <div class="chapter-badge" id="debrief-chapter-badge"></div>
+    <p class="drawtitle">Debrief — score yourselves, not each other</p>
+    <p style="font-size:13px;color:var(--ink-soft);margin-top:-8px;margin-bottom:16px;">Only the tools you've read so far are listed below. Go through it together — the goal is noticing which moves you skipped under pressure, not a perfect score.</p>
+    <div id="debrief-content"></div>
+    <div class="state-block">
+      <h4>Notes for next time</h4>
+      <textarea placeholder="What's the one moment you'd replay differently? Swap roles and re-run the same case to feel the other side."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="showStage('stage-pick')">↻ New case</button>
+      <button class="btn-secondary" onclick="showStage('stage-gate')">Change chapter level</button>
+    </div>
+    <p class="small-note">Suggestion: run the exact same case again with roles swapped. Same facts, opposite seat.</p>
+  </div>
+
+  <footer>Mapped to <em>Crucial Conversations</em>, 3rd edition (Grenny, Patterson, McMillan, Switzler, 2021) chapter order.</footer>
+</div>
+
+<script>
+const CASES = [
+  { title:"The Silent Merge",
+    shared:"Last night Alex merged a PR into main that changes the state-management pattern for a shared component — without waiting for Jordan's review. Jordan finds out this morning, the day before going on two weeks of PTO.",
+    A:{label:"Alex", text:"You merged because the sprint deadline is Friday and QA needs two full days to test. Jordan has left review requests sitting for over a week on three separate occasions this month, and you were genuinely worried this would slip again with Jordan about to disappear for two weeks. You also privately think Jordan's reviews have gotten slower and more nitpicky lately, to the point where it's affecting delivery, but you've never said that directly."},
+    B:{label:"Jordan", text:"You've been slower reviewing Alex's PRs since a race condition in one of Alex's changes caused a production outage two months ago — a bug you personally got paged for at 2am. Since then you've been deliberately more careful, and you believe that caution is the reason the codebase has been stable since. Finding out this specific PR — touching shared state logic — was merged without your review, right before you go unreachable for two weeks, feels like your judgment was overridden and your concern dismissed."}
+  },
+  { title:"Credit Where It's Due",
+    shared:"In yesterday's sprint demo to leadership, Priya presented the new analytics dashboard as \"what my team built,\" without mentioning that Sam wrote roughly 80% of the underlying data-fetching and caching logic that made it possible.",
+    A:{label:"Sam", text:"You spent three weekends debugging a nasty caching bug that would have made the dashboard unusable, and Priya knows it because you were pairing on Slack huddles at 11pm together. You don't need public praise, but you're up for a mid-level-to-senior promotion this cycle, and visibility with leadership specifically matters for that case. This isn't the first time Priya has presented team work in the first person singular."},
+    B:{label:"Priya", text:"You were nervous going into that leadership demo — it's the first time you've presented to that level of the org, and you were coached beforehand to speak confidently and \"own the outcome\" rather than get lost in a list of contributors. You didn't consciously decide to omit Sam; you were focused on not stumbling through the Q&A. You do genuinely see this as a joint effort and would push back hard if anyone suggested you did the technical work yourself."}
+  },
+  { title:"The Flaky Test Standoff",
+    shared:"The CI pipeline has an end-to-end test that fails intermittently — roughly 30% of runs — blocking releases. Morgan wants to quarantine/skip it immediately to unblock the release train. Deniz refuses, insisting it needs a proper root-cause fix first.",
+    A:{label:"Morgan", text:"Product has already slipped this release once, and you're the one fielding angry messages from the account team about a client-visible date. You've seen this exact test flake for over a month with zero visible progress on a fix, and you suspect it's actually masking a real race condition that quarantining won't make worse — it's already effectively being ignored by everyone re-running CI three times to get green."},
+    B:{label:"Deniz", text:"You've traced the flake to a real timing bug in the checkout flow that occasionally also happens in production, just rarely enough that no one's connected it to customer complaints about \"double charges\" support has been getting for weeks. You're worried that quarantining the test makes an actual money-affecting bug invisible again, and you feel like reliability concerns keep losing to deadline pressure on this team."}
+  },
+  { title:"Tech Debt vs. Deadline",
+    shared:"The PM wants a new checkout feature shipped by Friday for a marketing commitment already made externally. Casey believes the only realistic way to hit that date is to hardcode logic that bypasses the team's design system and validation layer. Riley, the informal tech lead, says that's not acceptable.",
+    A:{label:"Casey", text:"You already scoped the \"proper\" way and it's an 8-10 day effort minimum — you did that estimate yourself two days ago. Nobody told you about the external marketing commitment until yesterday. You feel caught between a PM who overpromised and a tech lead who wasn't in the room when that promise was made, and you're the one who'll be blamed either way this goes."},
+    B:{label:"Riley", text:"Six months ago the team shipped a similarly \"just this once\" hardcoded shortcut in the pricing flow, and it's caused two production incidents and roughly three weeks of cumulative firefighting since — you have the incident tickets to prove it. You weren't looped into the marketing commitment either, and you're frustrated this is being framed as an engineering delay rather than a sales/PM commitment problem."}
+  },
+  { title:"Who Broke Prod",
+    shared:"A production incident happened overnight. The postmortem hasn't started yet, but this morning in the team Slack channel, Amir posted a message implying the outage was caused by a config change Jamie pushed yesterday.",
+    A:{label:"Jamie", text:"You did push a config change yesterday, but it was reviewed and approved by two people, deployed at 2pm, and had zero errors for six hours before the incident started at 8pm — well after Amir's feature flag rollout went out to 50% of production traffic at 7:45pm. You already suspect it's Amir's rollout, but you don't have full log access to prove it yet, and you're angry Amir posted blame publicly before anyone looked at the data."},
+    B:{label:"Amir", text:"Your feature flag rollout has shipped cleanly to production four times before with no issues, so your instinct was that the newer, less-tested change (Jamie's config push) was the more likely cause. You posted in Slack mostly to get eyes on it fast during an active incident, not to assign blame — but you can see now, in hindsight, how it read that way, and you haven't looked closely enough yet to rule out your own rollout."}
+  },
+  { title:"The Ghost Reviewer",
+    shared:"Sasha approves nearly every PR with just \"LGTM 👍\" within two minutes of it being opened. Priya, the team lead, needs thorough reviews to be defensible for an upcoming SOC 2 audit and has said so in a team meeting, but nothing has changed.",
+    A:{label:"Sasha", text:"You've quietly been reading PRs mostly on the diff preview in Slack notifications and trust your teammates' code — you've caught real bugs before by skimming, and you think the \"thorough review\" ask is more about audit theater than actual code quality, since the audit checklist just needs a review to exist, not a transcript of what was checked. You also have the highest PR-throughput on the team and are quietly proud of not being a bottleneck."},
+    B:{label:"Priya", text:"You were told directly by the compliance consultant that \"LGTM\" with no comments, on a PR reviewed in under two minutes, is very likely to be flagged as a rubber-stamp control during the actual audit interview, which could affect the company's SOC 2 certification timeline and a client contract that depends on it. You haven't explained the audit mechanics in detail to Sasha, and you're aware this might look like you're questioning Sasha's competence rather than a compliance requirement."}
+  },
+  { title:"Remote vs. In-Office Bias",
+    shared:"Tara works remote full-time; Ben is in the office four days a week. Tara feels decisions keep getting made in hallway/in-person conversations that never make it back to Slack. Ben feels Tara has become slow to respond and disengaged over the last month.",
+    A:{label:"Tara", text:"Twice in the last three weeks you found out about architecture decisions after the fact, once from a Confluence page that was already merged. You've started responding more slowly in Slack partly because you've stopped trusting that async input actually gets weighted the same as in-room input, so it feels less worth the effort — though you haven't said that out loud."},
+    B:{label:"Ben", text:"You didn't think of the hallway conversations as \"decisions\" — more like brainstorming that happened to include two people who were already talking about something else, and you assumed things would get properly proposed in Slack or a doc afterward before being final. You've noticed Tara taking 1-2 days to respond to direct questions recently and have started routing time-sensitive things to in-office people instead, which you know now might be making the problem worse."}
+  },
+  { title:"The Solo Refactor",
+    shared:"Over what was scoped as a two-week \"cleanup sprint,\" Devon quietly rewrote a core shared module to strict TypeScript, restructuring its public API. It's now breaking roughly a dozen in-flight branches across the team.",
+    A:{label:"Devon", text:"You raised the idea of strict-mode migration in a team doc three months ago and got two thumbs-up emoji reactions and no discussion, which you took as approval. You genuinely believe this prevents a class of bugs that has caused at least two production incidents this year, and you're proud of the work — you weren't trying to blindside anyone, you assumed people would rebase as needed like any other shared-module change."},
+    B:{label:"the team lead reviewing this with Devon", text:"You have four engineers currently blocked mid-feature because their branches won't compile against the new API, with no migration guide provided. Two emoji reactions on a doc three months ago is not what you'd call a team decision, and you're now going to have an uncomfortable conversation with the PM about why velocity dropped this week with no clear external cause. You also don't want to crush Devon's initiative, because the underlying technical instinct was probably right."}
+  }
+];
+
+// Chapter -> tools introduced, 3rd edition order.
+const CHAPTER_META = {
+  1:"Ch. 1 — What's a Crucial Conversation?",
+  2:"Ch. 2 — Mastering Crucial Conversations",
+  3:"Ch. 3 — Choose Your Topic",
+  4:"Ch. 4 — Start with Heart",
+  5:"Ch. 5 — Master My Stories",
+  6:"Ch. 6 — Learn to Look",
+  7:"Ch. 7 — Make It Safe",
+  8:"Ch. 8 — STATE My Path",
+  9:"Ch. 9 — Explore Others' Paths",
+  10:"Ch. 10 — Retake Your Pen",
+  11:"Ch. 11 — Move to Action",
+  12:"Ch. 12 — Yeah, But",
+  13:"Ch. 13 — Putting It All Together"
+};
+
+const DEBRIEF_BLOCKS = [
+  { ch:1, title:"Notice It's Crucial", items:[
+    "We paused to actually recognize this as a crucial conversation — opinions differ, stakes are real, emotions are running — instead of pretending it wasn't a big deal.",
+    "Neither of us defaulted straight to Avoid it, or to Handle it badly and blow up/clam up, without noticing we had a third option."
+  ]},
+  { ch:2, title:"Dialogue, Not Silence or Violence", items:[
+    "I worked on myself first instead of trying to fix, control, or diagnose the other person.",
+    "I noticed if either of us slipped into silence (masking, avoiding, withdrawing) or violence (controlling, labeling, attacking) instead of staying in dialogue.",
+    "I stayed focused on adding to the shared pool of meaning rather than trying to win."
+  ]},
+  { ch:3, title:"Choose Your Topic (CPR)", items:[
+    "We were actually discussing the right issue — I checked whether this is a one-off Content problem, a repeated Pattern, or about the Relationship itself.",
+    "If several issues were tangled together, we picked one and named it clearly instead of dumping everything on the table at once."
+  ]},
+  { ch:4, title:"Start with Heart", items:[
+    "Before diving in, I got clear on what I really want — for myself, for the other person, and for the relationship.",
+    "I refused the Sucker's Choice (assuming it's either be honest OR be kind, either get results OR keep the peace) and looked for a way to do both.",
+    "I checked I wasn't just trying to win, punish, or avoid conflict."
+  ]},
+  { ch:5, title:"Master My Stories", items:[
+    "I separated what I actually observed (fact) from the story/interpretation I built on top of it, out loud.",
+    "I noticed if I'd cast the other person as a villain, myself as a victim, or the situation as one where I'm helpless — and questioned that story.",
+    "I retraced my path: from the objective facts, to the story I told myself, to the feeling it created, to the action I was about to take — and checked each link."
+  ]},
+  { ch:6, title:"Learn to Look", items:[
+    "I watched for when the conversation became unsafe, not just what was being said — tone, pace, body language.",
+    "I noticed early signs of silence (sarcasm, changing the subject, going quiet) or violence (interrupting, absolute language, dramatic gestures) in either of us."
+  ]},
+  { ch:7, title:"Make It Safe", items:[
+    "When safety broke, I stepped out of the content and rebuilt safety before continuing.",
+    "I checked for Mutual Purpose (do we both believe we're working toward the same outcome?) and Mutual Respect before pushing my view further.",
+    "I apologized if appropriate, or used Contrast (\"I don't mean X, I do mean Y\") to fix a misunderstanding.",
+    "If purposes seemed to genuinely conflict, I used CRIB: Committed to seek mutual purpose, Recognized the purpose behind their strategy, Invented a mutual purpose, Brainstormed new strategies."
+  ]},
+  { ch:8, title:"STATE My Path", items:[
+    "Share: I led with the facts, before conclusions.",
+    "Tell: I told my story tentatively (\"I'm concluding...\" not \"The truth is...\").",
+    "Ask: I asked for the other person's facts and story before defending mine.",
+    "Talk tentatively: I left room for being wrong.",
+    "Encourage testing: I actually invited disagreement, and meant it."
+  ]},
+  { ch:9, title:"Explore Others' Paths (AMPP)", items:[
+    "Ask: I genuinely invited the other person to share their view.",
+    "Mirror: I acknowledged their emotion when it would help them feel safe sharing more.",
+    "Paraphrase: I restated their point in my own words to show I understood it, before responding to it.",
+    "Prime: if they were still holding back, I offered a guess at what they might be thinking or feeling to get the ball rolling.",
+    "When we agreed, I built on it; when we differed, I compared paths rather than assuming one of us must be wrong."
+  ]},
+  { ch:10, title:"Retake Your Pen", items:[
+    "After hearing a difficult or troubling story from the other person, I consciously chose how to interpret and respond to it rather than reacting on autopilot.",
+    "I checked whether the meaning I was about to assign to what they said was the most useful one available, not just the first one that came to mind."
+  ]},
+  { ch:11, title:"Move to Action", items:[
+    "We were explicit about how the decision would actually get made (command, consult, vote, or consensus) rather than assuming.",
+    "We closed with clear Who does What, by When, and How we'll follow up."
+  ]},
+  { ch:12, title:"Yeah, But — Hard Cases", items:[
+    "If the other person was highly emotional, silent, or dishonest, I adapted the tools rather than abandoning them or forcing a script.",
+    "I recognized which specific failure mode was happening (blowing up, shutting down, telling half-truths) and named it rather than just pushing through."
+  ]}
+];
+
+let currentCase = null;
+let timerInterval = null;
+let secondsLeft = 90;
+let inPrepPhase = true;
+let selectedChapter = 4;
+
+function renderGateInfo(){
+  const val = parseInt(document.getElementById('chapterSelect').value, 10);
+  const info = document.getElementById('gate-info');
+  if(val <= 2){
+    info.innerHTML = '<div class="locked-note">At this level the debrief only covers recognizing a crucial conversation and staying in dialogue — none of the specific tools (Start with Heart, STATE, etc.) exist yet. That\'s fine, it\'s the right debrief for where you are.</div>';
+  } else {
+    info.innerHTML = '';
+  }
+}
+
+function lockChapterAndProceed(){
+  selectedChapter = parseInt(document.getElementById('chapterSelect').value, 10);
+  document.getElementById('active-chapter-badge').textContent = 'Cleared through: ' + CHAPTER_META[selectedChapter];
+  showStage('stage-pick');
+}
+
+function showStage(id){
+  document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function drawCase(){
+  currentCase = CASES[Math.floor(Math.random()*CASES.length)];
+  document.getElementById('case-num').textContent = 'CASE FILE — ' + String(Math.floor(Math.random()*8999+1000));
+  document.getElementById('case-title').textContent = currentCase.title;
+  document.getElementById('case-shared').textContent = currentCase.shared;
+  document.getElementById('labelA').textContent = currentCase.A.label;
+  document.getElementById('labelB').textContent = currentCase.B.label;
+  showStage('stage-brief');
+}
+
+function revealRole(which){
+  const data = which === 'A' ? currentCase.A : currentCase.B;
+  document.getElementById('reveal-role-label').textContent = 'Role ' + which + ' — Private Context';
+  document.getElementById('reveal-name').textContent = data.label;
+  document.getElementById('reveal-text').textContent = data.text;
+  showStage('stage-reveal');
+  buildPrepPrompt();
+  buildDebrief();
+}
+
+function buildPrepPrompt(){
+  const el = document.getElementById('prep-prompt');
+  if(selectedChapter <= 3){
+    el.textContent = "90 seconds, silently: notice whether this is genuinely a crucial conversation for you (stakes, differing opinions, emotion) and, if several issues are tangled together, decide which single issue you actually want to raise. Then start talking.";
+  } else if(selectedChapter <= 5){
+    el.textContent = "90 seconds, silently: get clear on what you really want here — for you, the other person, and the relationship — and notice any Sucker's Choice you're assuming (Ch.4). If you're through Ch.5, also separate the facts you actually observed from the story you've built on top of them. Then start talking.";
+  } else if(selectedChapter <= 7){
+    el.textContent = "90 seconds, silently: get clear on what you really want (Ch.4), separate fact from story (Ch.5), and go in planning to watch for safety breaking as much as for the content itself (Ch.6-7). Then start talking.";
+  } else {
+    el.textContent = "90 seconds, silently: get clear on what you want, check your story against the facts, and plan to open by sharing facts before conclusions (STATE, Ch.8+). Then start talking.";
+  }
+}
+
+function buildDebrief(){
+  document.getElementById('debrief-chapter-badge').textContent = 'Cleared through: ' + CHAPTER_META[selectedChapter];
+  const container = document.getElementById('debrief-content');
+  container.innerHTML = '';
+  const applicable = DEBRIEF_BLOCKS.filter(b => b.ch <= selectedChapter);
+  applicable.forEach(block => {
+    const div = document.createElement('div');
+    div.className = 'state-block';
+    let html = '<h4>' + block.title + '</h4><span class="ch-tag">' + CHAPTER_META[block.ch] + '</span>';
+    block.items.forEach((item, idx) => {
+      html += '<label class="check"><input type="checkbox"><span>' + item + '</span></label>';
+    });
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function resetTimer(){
+  clearInterval(timerInterval); timerInterval = null;
+  inPrepPhase = true; secondsLeft = 90;
+  document.getElementById('timer-phase').textContent = 'Prep (silent)';
+  document.getElementById('timer-toggle').textContent = 'Start';
+  updateTimerDisplay();
+}
+function skipToTalk(){
+  clearInterval(timerInterval); timerInterval = null;
+  inPrepPhase = false; secondsLeft = 0;
+  document.getElementById('timer-phase').textContent = 'Talking (count up)';
+  document.getElementById('timer-toggle').textContent = 'Start';
+  updateTimerDisplay();
+}
+function updateTimerDisplay(){
+  const m = Math.floor(Math.abs(secondsLeft)/60).toString().padStart(2,'0');
+  const s = (Math.abs(secondsLeft)%60).toString().padStart(2,'0');
+  document.getElementById('timer-display').textContent = m+':'+s;
+}
+function toggleTimer(){
+  const btn = document.getElementById('timer-toggle');
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; btn.textContent = 'Resume'; return; }
+  btn.textContent = 'Pause';
+  timerInterval = setInterval(() => {
+    if(inPrepPhase){
+      secondsLeft--;
+      if(secondsLeft <= 0){ inPrepPhase = false; secondsLeft = 0; document.getElementById('timer-phase').textContent = 'Talking (count up)'; }
+    } else { secondsLeft++; }
+    updateTimerDisplay();
+  }, 1000);
+}
+
+renderGateInfo();
+updateTimerDisplay();
+</script>
+</body>
+</html>
