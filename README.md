@@ -1,5 +1,7 @@
 # Crucial Conversations Dojo
 
+> 🤖 This tool — code, scenarios, README, all of it — was 100% generated with AI (Claude), based on a mentorship-practice idea and iterative feedback. No hand-written code.
+
 A single-file, no-build practice tool for rehearsing the skills from
 *Crucial Conversations: Tools for Talking When Stakes Are High* (3rd ed.,
 Patterson, Grenny, McMillan, Switzler) with a colleague or mentee.
