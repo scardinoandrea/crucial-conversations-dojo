@@ -37,6 +37,9 @@
   .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
   h1.title{font-family:'Special Elite',cursive;font-size:clamp(28px,5vw,42px);margin:0 0 6px;letter-spacing:0.02em;}
   .subtitle{font-size:14px;color:var(--ink-soft);max-width:540px;margin:0 auto;line-height:1.5;}
+  .home-link{cursor:pointer;border-bottom:2px dotted transparent;transition:border-color 0.12s ease;}
+  .home-link:hover{border-bottom-color:var(--folder-shadow);}
+  .home-link:focus-visible{outline:2px solid var(--safety-teal);outline-offset:4px;}
 
   .panel{background:var(--paper);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);padding:24px;margin-bottom:20px;position:relative;}
   .panel::before{content:"";position:absolute;top:0;left:24px;right:24px;height:3px;background:repeating-linear-gradient(90deg,var(--line) 0 6px, transparent 6px 12px);opacity:0.5;}
@@ -135,7 +138,7 @@
 
   <header class="masthead">
     <div class="kicker">Mentorship Practice Series</div>
-    <h1 class="title">The Case File</h1>
+    <h1 class="title"><span class="home-link" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome();}" role="button" tabindex="0" title="Back to the start">The Case File</span></h1>
     <p class="subtitle">A crucial-conversations dojo. Two roles, two sets of facts, one real disagreement — worked live with only the tools you've actually read so far.</p>
   </header>
 
@@ -455,6 +458,18 @@ function revealRole(which){
   showStage('stage-reveal');
   buildPrepPrompt();
   buildDebrief();
+}
+
+// Masthead title doubles as a way home. Mid-session it asks first, since
+// leaving drops the drawn case and whatever the timer was doing.
+function goHome(){
+  if(myRole !== null && !confirm('Start over? This drops the current case and resets the timer.')) return;
+  currentCase = null;
+  currentCaseIdx = null;
+  currentFileNo = null;
+  resetTimer();
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  showStage('stage-gate');
 }
 
 // The dossier is populated the moment a role is revealed, but it only appears
