@@ -411,6 +411,7 @@ function lockChapterAndProceed(){
 function showStage(id){
   // Backing all the way out of a case retires the pinned dossier with it.
   if(id === 'stage-pick' || id === 'stage-gate') clearRole();
+  syncDossier(id);
   document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   window.scrollTo({top:0, behavior:'smooth'});
@@ -448,14 +449,21 @@ function revealRole(which){
   document.getElementById('dossier-role-label').textContent = 'Role ' + which + ' — your file';
   document.getElementById('dossier-name').textContent = data.label;
   document.getElementById('dossier-text').textContent = data.text;
-  const aside = document.getElementById('role-dossier');
-  aside.classList.remove('hidden', 'collapsed');
+  document.getElementById('role-dossier').classList.remove('collapsed');
   document.getElementById('dossier-hide-btn').textContent = 'Hide contents';
-  document.body.classList.add('has-dossier');
 
   showStage('stage-reveal');
   buildPrepPrompt();
   buildDebrief();
+}
+
+// The dossier is populated the moment a role is revealed, but it only appears
+// on screen from the prep/talk stage onward — before that the reveal panel is
+// already showing the same text, and a second copy is just noise.
+function syncDossier(id){
+  const show = myRole !== null && (id === 'stage-timer' || id === 'stage-debrief');
+  document.getElementById('role-dossier').classList.toggle('hidden', !show);
+  document.body.classList.toggle('has-dossier', show);
 }
 
 function clearRole(){
