@@ -32,7 +32,45 @@ stake, which is what this tool manufactures on purpose.
 6. **Re-run the same case with roles swapped**, or once you've unlocked
    more chapters, to feel the difference more tools make.
 
+## Running it on two machines
+
+You don't have to share a screen. On the case brief, hit **Copy invite
+link** and send it to the other person — the link encodes the case and
+the chapter level in the URL hash, so they land on the exact same case
+at the same level:
+
+```
+https://<host>/#c=5&f=4821&ch=4
+```
+
+The link deliberately carries **no role**, so it's safe to paste to
+anyone playing: you each pick your own seat on your own screen. Once
+you've picked, your private context stays pinned in a sidebar for the
+rest of the session, so you can re-read your own file mid-conversation
+without navigating away from the timer or the debrief. **Hide contents**
+collapses it if you're screen-sharing.
+
+Sync is one-shot, not live: the case and level are shared, but timers
+run independently on each machine — start them together out loud. And
+the secrecy is trust-based, as it always was. Both roles' text ships in
+`index.html` to every browser, so anyone determined to read the other
+card via devtools can. Anyone who'd do that has already opted out of
+the exercise.
+
 ## Running it
+
+No build step, no dependencies. Just open `index.html` in a browser, or
+serve the folder with any static file server:
+
+```bash
+python3 -m http.server 8000
+# then open http://localhost:8000
+```
+
+Note: on `file://` some browsers block `history.replaceState`, so the
+tool falls back to setting the hash directly. Serving over HTTP (or the
+deployed URL) avoids that, and the clipboard button needs a secure
+context (HTTPS or localhost) to work at all.
 
 No build step, no dependencies. Just open `index.html` in a browser, or
 serve the folder with any static file server:

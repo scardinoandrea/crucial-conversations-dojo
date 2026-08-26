@@ -102,6 +102,29 @@
   label.check{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.06);}
   label.check input{margin-top:3px;width:16px;height:16px;accent-color:var(--safety-teal);flex-shrink:0;}
   textarea{width:100%;min-height:70px;font-family:'Inter',sans-serif;font-size:13.5px;padding:10px;border:1px solid var(--line);border-radius:4px;background:#fffdf7;resize:vertical;}
+  /* --- two-column shell: case on the left, your own dossier pinned right --- */
+  .dojo-shell{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;}
+  .dojo-main{min-width:0;}
+  body.has-dossier .wrap{max-width:1140px;}
+  body.has-dossier .dojo-shell{grid-template-columns:minmax(0,1fr) 330px;}
+
+  #role-dossier{position:sticky;top:20px;}
+  .dossier-card{background:var(--ink);color:var(--kraft);border:1px solid #4a4230;border-radius:4px;padding:18px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
+  .dossier-card .stamp{top:12px;right:-28px;font-size:9.5px;padding:4px 34px;}
+  .dossier-card .dossier-role{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.15em;text-transform:uppercase;color:#a89b7a;margin-bottom:10px;}
+  .dossier-card h3{font-family:'Special Elite',cursive;font-size:16px;margin:0 0 10px;color:var(--kraft);padding-right:60px;}
+  .dossier-card p.dossier-text{font-size:13.5px;line-height:1.6;color:#e8dfc8;margin:0;}
+  .dossier-card .warn{font-size:10.5px;margin-top:12px;padding-top:10px;}
+  .dossier-hide{background:transparent;border:1px solid #4a4230;color:#a89b7a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:6px 10px;margin-top:12px;width:100%;}
+  #role-dossier.collapsed p.dossier-text, #role-dossier.collapsed .warn{display:none;}
+
+  @media (max-width: 900px){
+    body.has-dossier .dojo-shell{grid-template-columns:minmax(0,1fr);}
+    #role-dossier{position:static;}
+  }
+
+  .invite-box{margin-top:16px;padding-top:14px;border-top:1px dashed var(--lock);}
+  .invite-box .small-note{margin-top:8px;}
   .hidden{display:none !important;}
   .small-note{font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
   footer{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:8px;font-family:'JetBrains Mono',monospace;}
@@ -115,6 +138,9 @@
     <h1 class="title">The Case File</h1>
     <p class="subtitle">A crucial-conversations dojo. Two roles, two sets of facts, one real disagreement — worked live with only the tools you've actually read so far.</p>
   </header>
+
+  <div class="dojo-shell">
+  <div class="dojo-main">
 
   <!-- STAGE 0: CHAPTER GATE -->
   <div class="panel" id="stage-gate">
@@ -161,6 +187,10 @@
       <div class="role-card" onclick="revealRole('B')">Role B<small id="labelB"></small></div>
     </div>
     <div class="btn-row"><button class="btn-secondary" onclick="drawCase()">↻ Different case</button></div>
+    <div class="invite-box">
+      <button class="btn-teal" onclick="copyInviteLink()" id="invite-btn">⧉ Copy invite link for the other person</button>
+      <p class="small-note">Send them this link and they'll land on <em>this exact case</em> at the same chapter level. It carries no role — you each still pick your own seat on your own screen.</p>
+    </div>
   </div>
 
   <!-- STAGE 3: CONFIDENTIAL REVEAL -->
@@ -208,6 +238,22 @@
     </div>
     <p class="small-note">Suggestion: run the exact same case again with roles swapped. Same facts, opposite seat.</p>
   </div>
+
+  </div><!-- /.dojo-main -->
+
+  <!-- PINNED: YOUR OWN DOSSIER (survives every stage change) -->
+  <aside id="role-dossier" class="hidden">
+    <div class="dossier-card">
+      <div class="stamp">EYES ONLY</div>
+      <div class="dossier-role" id="dossier-role-label"></div>
+      <h3 id="dossier-name"></h3>
+      <p class="dossier-text" id="dossier-text"></p>
+      <div class="warn">⚠ Yours only. Don't read it aloud — the gap is the exercise.</div>
+      <button class="dossier-hide" onclick="toggleDossier()" id="dossier-hide-btn">Hide contents</button>
+    </div>
+  </aside>
+
+  </div><!-- /.dojo-shell -->
 
   <footer>Mapped to <em>Crucial Conversations</em>, 3rd edition (Grenny, Patterson, McMillan, Switzler, 2021) chapter order.</footer>
 </div>
@@ -336,6 +382,9 @@ const DEBRIEF_BLOCKS = [
 ];
 
 let currentCase = null;
+let currentCaseIdx = null;
+let currentFileNo = null;
+let myRole = null;
 let timerInterval = null;
 let secondsLeft = 90;
 let inPrepPhase = true;
@@ -354,33 +403,108 @@ function renderGateInfo(){
 function lockChapterAndProceed(){
   selectedChapter = parseInt(document.getElementById('chapterSelect').value, 10);
   document.getElementById('active-chapter-badge').textContent = 'Cleared through: ' + CHAPTER_META[selectedChapter];
+  currentCaseIdx = null;
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   showStage('stage-pick');
 }
 
 function showStage(id){
+  // Backing all the way out of a case retires the pinned dossier with it.
+  if(id === 'stage-pick' || id === 'stage-gate') clearRole();
   document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function drawCase(){
-  currentCase = CASES[Math.floor(Math.random()*CASES.length)];
-  document.getElementById('case-num').textContent = 'CASE FILE — ' + String(Math.floor(Math.random()*8999+1000));
+// Renders a specific case. No randomness in here — this is the hook a shared
+// link uses so both machines land on identical content.
+function applyCase(idx, fileNo){
+  currentCaseIdx = idx;
+  currentFileNo = fileNo;
+  currentCase = CASES[idx];
+  document.getElementById('case-num').textContent = 'CASE FILE — ' + fileNo;
   document.getElementById('case-title').textContent = currentCase.title;
   document.getElementById('case-shared').textContent = currentCase.shared;
   document.getElementById('labelA').textContent = currentCase.A.label;
   document.getElementById('labelB').textContent = currentCase.B.label;
+  clearRole();
   showStage('stage-brief');
+}
+
+function drawCase(){
+  const idx = Math.floor(Math.random()*CASES.length);
+  const fileNo = String(Math.floor(Math.random()*8999+1000));
+  applyCase(idx, fileNo);
+  writeHash();
 }
 
 function revealRole(which){
   const data = which === 'A' ? currentCase.A : currentCase.B;
+  myRole = which;
   document.getElementById('reveal-role-label').textContent = 'Role ' + which + ' — Private Context';
   document.getElementById('reveal-name').textContent = data.label;
   document.getElementById('reveal-text').textContent = data.text;
+
+  document.getElementById('dossier-role-label').textContent = 'Role ' + which + ' — your file';
+  document.getElementById('dossier-name').textContent = data.label;
+  document.getElementById('dossier-text').textContent = data.text;
+  const aside = document.getElementById('role-dossier');
+  aside.classList.remove('hidden', 'collapsed');
+  document.getElementById('dossier-hide-btn').textContent = 'Hide contents';
+  document.body.classList.add('has-dossier');
+
   showStage('stage-reveal');
   buildPrepPrompt();
   buildDebrief();
+}
+
+function clearRole(){
+  myRole = null;
+  document.getElementById('role-dossier').classList.add('hidden');
+  document.body.classList.remove('has-dossier');
+}
+
+function toggleDossier(){
+  const aside = document.getElementById('role-dossier');
+  const collapsed = aside.classList.toggle('collapsed');
+  document.getElementById('dossier-hide-btn').textContent = collapsed ? 'Show contents' : 'Hide contents';
+}
+
+// --- shared-link sync: the URL hash is the whole protocol ---
+function writeHash(){
+  if(currentCaseIdx === null) return;
+  const h = '#c=' + currentCaseIdx + '&f=' + currentFileNo + '&ch=' + selectedChapter;
+  // replaceState throws on file:// in some browsers — the hash fallback still works.
+  try { history.replaceState(null, '', location.pathname + location.search + h); }
+  catch(e){ location.hash = h; }
+}
+
+function copyInviteLink(){
+  writeHash();
+  const btn = document.getElementById('invite-btn');
+  const done = () => { btn.textContent = '✓ Link copied — send it over'; setTimeout(() => { btn.textContent = '⧉ Copy invite link for the other person'; }, 2500); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(location.href).then(done, () => { btn.textContent = 'Copy failed — copy the URL bar instead'; });
+  } else {
+    btn.textContent = 'Copy the URL from the address bar';
+  }
+}
+
+function bootFromHash(){
+  const h = location.hash.replace(/^#/, '');
+  if(!h) return false;
+  const p = new URLSearchParams(h);
+  const idx = parseInt(p.get('c'), 10);
+  const ch = parseInt(p.get('ch'), 10);
+  const fileNo = p.get('f');
+  if(!Number.isInteger(idx) || idx < 0 || idx >= CASES.length) return false;
+  if(Number.isInteger(ch) && CHAPTER_META[ch]){
+    selectedChapter = ch;
+    document.getElementById('chapterSelect').value = String(ch);
+  }
+  document.getElementById('active-chapter-badge').textContent = 'Cleared through: ' + CHAPTER_META[selectedChapter];
+  applyCase(idx, /^\d{4}$/.test(fileNo || '') ? fileNo : '0000');
+  return true;
 }
 
 function buildPrepPrompt(){
@@ -447,6 +571,7 @@ function toggleTimer(){
 
 renderGateInfo();
 updateTimerDisplay();
+bootFromHash();
 </script>
 </body>
 </html>
