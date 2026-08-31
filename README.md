@@ -57,28 +57,6 @@ the secrecy is trust-based, as it always was. Both roles' text ships in
 card via devtools can. Anyone who'd do that has already opted out of
 the exercise.
 
-## Running it
-
-No build step, no dependencies. Just open `index.html` in a browser, or
-serve the folder with any static file server:
-
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
-```
-
-Note: on `file://` some browsers block `history.replaceState`, so the
-tool falls back to setting the hash directly. Serving over HTTP (or the
-deployed URL) avoids that, and the clipboard button needs a secure
-context (HTTPS or localhost) to work at all.
-
-No build step, no dependencies. Just open `index.html` in a browser, or
-serve the folder with any static file server:
-
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
-```
 
 ## Chapter mapping
 
