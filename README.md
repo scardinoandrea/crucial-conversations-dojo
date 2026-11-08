@@ -117,10 +117,13 @@ the 3rd edition order.
 
 ## Adding your own cases
 
-Cases live in the `CASES` array near the top of the `<script>` block in
-`index.html`. Each one needs a shared public `shared` situation plus
-private `A` and `B` context — the more the two private contexts justify
-opposing, reasonable positions, the better the practice.
+Cases live in the `CASES` array in `plugin/skills/dojo/cases.js` — the
+single source for both the site and the Claude skill. Each one needs a
+shared public `shared` situation plus private `A` and `B` context — the
+more the two private contexts justify opposing, reasonable positions, the
+better the practice. Append new cases at the end: invite links point at
+cases by array index, so inserting or reordering breaks links already
+sent. Pushing to `main` rebuilds the skill zip automatically.
 
 ## License
 
