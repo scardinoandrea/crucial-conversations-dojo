@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Solo with Claude — Crucial Conversations Dojo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M8 18h28l10 12h46a6 6 0 0 1 6 6v50a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6V24a6 6 0 0 1 6-6z%22 fill=%22%23a3803f%22/><path d=%22M2 40h96v46a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z%22 fill=%22%23c9a86a%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Palette mirrors index.html so the two pages read as one tool. */
+  :root{
+    --kraft:#e7dcc0; --folder:#c9a86a; --folder-shadow:#a3803f;
+    --ink:#241f16; --ink-soft:#5a5140; --paper:#f7f1e1;
+    --stamp-red:#9c2b23; --safety-teal:#3e5c55; --safety-teal-dark:#2b433d;
+    --line:#b8a479; --shadow:0 10px 30px rgba(36,31,22,0.25);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:radial-gradient(ellipse at top left, rgba(255,255,255,0.15), transparent 60%), var(--kraft);background-attachment:fixed;color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;padding:32px 16px 64px;line-height:1.55;}
+  .wrap{max-width:760px;margin:0 auto;}
+  header{text-align:center;margin-bottom:22px;}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  h1{font-family:'Special Elite',cursive;font-size:clamp(26px,5vw,38px);margin:0 0 6px;}
+  .subtitle{font-size:14px;color:var(--ink-soft);max-width:560px;margin:0 auto;}
+  .back{display:inline-block;margin-bottom:16px;font-size:13px;color:var(--ink);font-weight:600;}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow);padding:24px;margin-bottom:20px;}
+  h2{font-family:'Special Elite',cursive;font-size:20px;margin:0 0 12px;}
+  ol,ul{padding-left:20px;margin:0 0 8px;}
+  li{margin-bottom:8px;font-size:14.5px;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;}
+
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1.5px solid var(--line);}
+  .tab{font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;background:transparent;border:none;border-bottom:3px solid transparent;color:var(--ink-soft);padding:10px 12px;cursor:pointer;margin-bottom:-1.5px;}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--stamp-red);}
+  .tab:focus-visible{outline:2px solid var(--safety-teal);outline-offset:2px;}
+  .tabpanel[hidden]{display:none;}
+
+  .cmd{display:flex;align-items:stretch;margin:6px 0 4px;border:1px solid #4a4230;border-radius:4px;overflow:hidden;}
+  .cmd pre{flex:1;margin:0;background:var(--ink);color:var(--kraft);font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:10px 12px;overflow-x:auto;white-space:pre;}
+  .cmd button{background:var(--safety-teal);color:var(--paper);border:none;font-family:'Inter',sans-serif;font-weight:700;font-size:12px;padding:0 14px;cursor:pointer;min-width:72px;}
+  .cmd button:focus-visible{outline:2px solid var(--folder);outline-offset:-3px;}
+
+  .btn{display:inline-block;background:var(--stamp-red);color:var(--paper);font-weight:700;font-size:14px;padding:12px 18px;border-radius:3px;text-decoration:none;box-shadow:0 4px 0 #7a1f19;margin:6px 0 4px;}
+  .btn:focus-visible{outline:2px solid var(--safety-teal);outline-offset:3px;}
+  .note{font-size:12.5px;color:var(--ink-soft);}
+  .cmds-table{width:100%;border-collapse:collapse;font-size:14px;}
+  .cmds-table td{padding:7px 8px;border-bottom:1px solid rgba(0,0,0,0.07);vertical-align:top;}
+  .cmds-table td:first-child{white-space:nowrap;width:1%;}
+  footer{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:8px;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="./">← Back to the dojo</a>
+
+  <header>
+    <div class="kicker">No partner? No problem</div>
+    <h1>Practice solo with Claude</h1>
+    <p class="subtitle">Same cases, same chapter-scoped debrief — Claude takes the other seat. It keeps its own private file, holds its position, and only opens up when you earn it.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="install-h">
+    <h2 id="install-h">1. Install</h2>
+    <div class="tabs" role="tablist" aria-label="Where do you use Claude?">
+      <button class="tab" role="tab" id="tab-code" aria-controls="panel-code" aria-selected="true">Claude Code</button>
+      <button class="tab" role="tab" id="tab-cowork" aria-controls="panel-cowork" aria-selected="false" tabindex="-1">Cowork</button>
+      <button class="tab" role="tab" id="tab-chat" aria-controls="panel-chat" aria-selected="false" tabindex="-1">Claude.ai / desktop chat</button>
+    </div>
+
+    <div class="tabpanel" role="tabpanel" id="panel-code" aria-labelledby="tab-code" tabindex="0">
+      <ol>
+        <li>Add this repo as a plugin marketplace:
+          <div class="cmd"><pre>/plugin marketplace add scardinoandrea/crucial-conversations-dojo</pre><button type="button">Copy</button></div>
+        </li>
+        <li>Install the plugin:
+          <div class="cmd"><pre>/plugin install crucial-conversations@crucial-conversations-dojo</pre><button type="button">Copy</button></div>
+        </li>
+        <li>Start a session:
+          <div class="cmd"><pre>/crucial-conversations:dojo</pre><button type="button">Copy</button></div>
+          <span class="note">Or just say “let's practice a crucial conversation”.</span>
+        </li>
+      </ol>
+      <p class="note">Works the same in the terminal, the IDE extensions and the desktop app's Code tab.</p>
+    </div>
+
+    <div class="tabpanel" role="tabpanel" id="panel-cowork" aria-labelledby="tab-cowork" tabindex="0" hidden>
+      <ol id="cowork-steps">
+        <li>In the Claude desktop app, open <strong>Cowork</strong>, then <strong>Customize → Plugins → Add → Add marketplace</strong>.</li>
+        <li>Paste this repo and confirm:
+          <div class="cmd"><pre>https://github.com/scardinoandrea/crucial-conversations-dojo</pre><button type="button">Copy</button></div>
+        </li>
+        <li>Go to <strong>Discover</strong>, pick <strong>crucial-conversations</strong>, click <strong>Install</strong>.</li>
+        <li>Start a task and type <code>/crucial-conversations:dojo</code>, or ask to practice a crucial conversation.</li>
+      </ol>
+    </div>
+
+    <div class="tabpanel" role="tabpanel" id="panel-chat" aria-labelledby="tab-chat" tabindex="0" hidden>
+      <ol id="chat-steps">
+        <li>Download the skill:
+          <br><a class="btn" href="https://github.com/scardinoandrea/crucial-conversations-dojo/releases/download/skill-latest/dojo-skill.zip">⬇ dojo-skill.zip</a>
+        </li>
+        <li>In <strong>Settings → Capabilities</strong>, make sure <strong>Create and edit files</strong> is on (skills need it).</li>
+        <li>Open <strong>Customize → Skills → + → Create skill → Upload a skill</strong> and pick <code>dojo-skill.zip</code>.</li>
+        <li>In a new chat, say “let's practice a crucial conversation”.</li>
+      </ol>
+      <p class="note">On Team/Enterprise plans an admin may need to allow skill uploads. Uploaded skills don't auto-update — re-download the zip to get new cases. Already installed the plugin via Cowork or Claude Code? Skip this; it's available in chat too.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="how-h">
+    <h2 id="how-h">2. How a session runs</h2>
+    <ol>
+      <li><strong>Chapter level</strong> — prep, hints and debrief only use tools you've read.</li>
+      <li><strong>Case</strong> — random draw or pick one of the dojo's cases.</li>
+      <li><strong>Seat</strong> — you pick Role A or B and get your private file. Claude takes the other one and never shows it.</li>
+      <li><strong>Tone</strong> — how Claude's character shows up: polite, intimidating, scared, defensive, passive-aggressive, withdrawn, or random (revealed at the end).</li>
+      <li><strong>Prep, then talk</strong> — you open. Claude holds its ground and only shares its hidden facts when you make it safe to.</li>
+      <li><strong>Debrief</strong> — Claude reveals its file and scores you against the checklist, quoting your own words as evidence.</li>
+    </ol>
+  </section>
+
+  <section class="panel" aria-labelledby="cmds-h">
+    <h2 id="cmds-h">3. During the talk</h2>
+    <table class="cmds-table">
+      <tr><td><code>hint</code></td><td>Claude steps out of character for one coaching tip, then carries on.</td></tr>
+      <tr><td><code>tone &lt;name&gt;</code></td><td>Switch Claude's tone mid-conversation.</td></tr>
+      <tr><td><code>pause</code> / <code>resume</code></td><td>Freeze the role-play.</td></tr>
+      <tr><td><code>end</code></td><td>Stop and debrief.</td></tr>
+      <tr><td><code>swap</code></td><td>After the debrief, rerun the same case from the other seat.</td></tr>
+    </table>
+  </section>
+
+  <footer>Mapped to <em>Crucial Conversations</em>, 3rd edition (Grenny, Patterson, McMillan, Switzler, 2021).</footer>
+</div>
+
+<script>
+// Copy buttons: copy the sibling <pre>. Clipboard API needs a secure context
+// (https or localhost); elsewhere fall back to selecting the text.
+document.querySelectorAll('.cmd button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.previousElementSibling;
+    const text = pre.textContent;
+    const flash = msg => { btn.textContent = msg; setTimeout(() => { btn.textContent = 'Copy'; }, 1800); };
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(() => flash('Copied'), () => flash('Failed'));
+    } else {
+      const r = document.createRange(); r.selectNodeContents(pre);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      flash('Selected');
+    }
+  });
+});
+
+// Tabs: WAI-ARIA tabs pattern (click + arrow keys, roving tabindex).
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(tab){
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener('click', () => selectTab(tab));
+  tab.addEventListener('keydown', e => {
+    let j = null;
+    if(e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+    if(e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+    if(e.key === 'Home') j = 0;
+    if(e.key === 'End') j = tabs.length - 1;
+    if(j !== null){ e.preventDefault(); tabs[j].focus(); selectTab(tabs[j]); }
+  });
+});
+</script>
+</body>
+</html>

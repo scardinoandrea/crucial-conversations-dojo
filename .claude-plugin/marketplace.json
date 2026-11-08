@@ -1,0 +1,14 @@
+{
+  "name": "crucial-conversations-dojo",
+  "owner": { "name": "Andrea Scardino" },
+  "metadata": {
+    "description": "Practice tools for Crucial Conversations."
+  },
+  "plugins": [
+    {
+      "name": "crucial-conversations",
+      "source": "./plugin",
+      "description": "Solo Crucial Conversations practice: Claude plays the other person, holds its hidden context, and debriefs you."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "crucial-conversations",
+  "version": "1.0.0",
+  "description": "Solo Crucial Conversations practice: Claude plays the other person in a realistic team conflict, then debriefs you against the chapters you've read.",
+  "author": { "name": "Andrea Scardino" },
+  "homepage": "https://scardinoandrea.github.io/crucial-conversations-dojo/",
+  "repository": "https://github.com/scardinoandrea/crucial-conversations-dojo",
+  "license": "MIT",
+  "keywords": ["crucial-conversations", "communication", "practice", "role-play", "mentorship"]
+}

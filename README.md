@@ -32,6 +32,39 @@ stake, which is what this tool manufactures on purpose.
 6. **Re-run the same case with roles swapped**, or once you've unlocked
    more chapters, to feel the difference more tools make.
 
+## No partner? Practice solo with Claude
+
+The same cases ship as a Claude skill, wrapped in a plugin, so Claude can
+take the other seat. Claude keeps its role's private file to itself, holds
+its position, plays a tone you pick (polite, intimidating, scared,
+defensive, passive-aggressive, withdrawn, or random), gives a coaching
+`hint` only when you ask, and debriefs you against the same chapter-scoped
+checklist — quoting your own words as evidence.
+
+Install steps for Claude Code, Cowork and claude.ai are on
+[install.html](https://scardinoandrea.github.io/crucial-conversations-dojo/install.html)
+(also linked from the bottom-right of the start screen). Quick version for
+Claude Code:
+
+```
+/plugin marketplace add scardinoandrea/crucial-conversations-dojo
+/plugin install crucial-conversations@crucial-conversations-dojo
+/crucial-conversations:dojo
+```
+
+Layout:
+
+- `plugin/skills/dojo/cases.js` — **single source** for cases, chapter
+  titles and the debrief checklist. `index.html` loads it with a plain
+  `<script src>` (so `file://` still works) and the skill reads it as text.
+  Edit cases here only.
+- `plugin/skills/dojo/SKILL.md` — the solo-mode instructions.
+- `.claude-plugin/marketplace.json` + `plugin/.claude-plugin/plugin.json` —
+  make the repo installable as a plugin marketplace.
+- `.github/workflows/skill-zip.yml` — on every change to the skill on
+  `main`, zips it into `dojo-skill.zip` on the `skill-latest` release for
+  claude.ai upload.
+
 ## Running it on two machines
 
 You don't have to share a screen. On the case brief, hit **Copy invite
