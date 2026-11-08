@@ -34,6 +34,8 @@
   .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--stamp-red);}
   .tab:focus-visible{outline:2px solid var(--safety-teal);outline-offset:2px;}
   .tabpanel[hidden]{display:none;}
+  h3.sub{font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);margin:18px 0 8px;}
+  .tabpanel h3.sub:first-child{margin-top:4px;}
 
   .cmd{display:flex;align-items:stretch;margin:6px 0 4px;border:1px solid #4a4230;border-radius:4px;overflow:hidden;}
   .cmd pre{flex:1;margin:0;background:var(--ink);color:var(--kraft);font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:10px 12px;overflow-x:auto;white-space:pre;}
@@ -68,6 +70,7 @@
     </div>
 
     <div class="tabpanel" role="tabpanel" id="panel-code" aria-labelledby="tab-code" tabindex="0">
+      <h3 class="sub">In the terminal or an IDE extension</h3>
       <ol>
         <li>Add this repo as a plugin marketplace:
           <div class="cmd"><pre>/plugin marketplace add scardinoandrea/crucial-conversations-dojo</pre><button type="button">Copy</button></div>
@@ -80,7 +83,6 @@
           <span class="note">Or just say “let's practice a crucial conversation”.</span>
         </li>
       </ol>
-      <p class="note">Works the same in the terminal, the IDE extensions and the desktop app's Code tab.</p>
     </div>
 
     <div class="tabpanel" role="tabpanel" id="panel-cowork" aria-labelledby="tab-cowork" tabindex="0" hidden>
