@@ -5,9 +5,16 @@
 (function(){
   const REPO = 'https://github.com/scardinoandrea/crucial-conversations-dojo';
 
+  // Bottom-pinning: on short pages the footer sits flush against the bottom
+  // edge of the window; on long ones it just follows the content. Requires
+  // the page to wrap its content in a .wrap that is a direct child of <body>
+  // and the direct parent of <site-footer> (true for every page today).
+  // The page's own bottom padding is dropped so nothing sits below the footer;
+  // a page with fixed bottom UI can reserve room via site-footer padding-bottom.
   const CSS = `
-    site-footer{display:block;line-height:1.55;}
-    site-footer .mapped{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:8px;}
+    body:has(> .wrap > site-footer){display:flex;flex-direction:column;padding-bottom:0;}
+    .wrap:has(> site-footer){flex:1 0 auto;width:100%;display:flex;flex-direction:column;}
+    site-footer{display:block;line-height:1.55;margin-top:auto;padding-bottom:16px;}
     site-footer .site-foot{margin-top:28px;padding-top:18px;border-top:1px dashed var(--line);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink-soft);}
     site-footer .site-name{font-family:'Special Elite',cursive;font-size:16px;color:var(--ink);}
     site-footer a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;}
@@ -20,7 +27,6 @@
 
   const HTML = `
     <footer>
-      <div class="mapped">Mapped to <em>Crucial Conversations</em>, 3rd edition (Grenny, Patterson, McMillan, Switzler, 2021) chapter order.</div>
       <div class="site-foot">
         <div class="site-name">Crucial Conversations Dojo</div>
         <div><a href="about.html">About &amp; privacy</a></div>
