@@ -138,7 +138,6 @@
   .hidden{display:none !important;}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
   .small-note{font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
-  footer{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:8px;font-family:'JetBrains Mono',monospace;}
 
   /* Solo-mode pointer: only on the start stage, so it never sits over the
      timer or the pinned dossier mid-session (toggled in showStage). */
@@ -150,7 +149,9 @@
   @media (max-width: 480px){
     .solo-pill{left:16px;right:16px;bottom:16px;justify-content:center;}
   }
+
 </style>
+<script src="footer.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -283,7 +284,7 @@
     <span>No partner? <a href="install.html">Practice with Claude</a></span>
   </aside>
 
-  <footer>Mapped to <em>Crucial Conversations</em>, 3rd edition (Grenny, Patterson, McMillan, Switzler, 2021) chapter order.</footer>
+  <site-footer></site-footer>
 </div>
 
 <script src="plugin/skills/dojo/cases.js"></script>
